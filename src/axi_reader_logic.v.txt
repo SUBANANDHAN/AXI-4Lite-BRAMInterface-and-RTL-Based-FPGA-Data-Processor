@@ -1,0 +1,62 @@
+module axi_reader_logic (
+    input wire clk,
+    input wire resetn,
+    output reg [31:0] data_out,
+    output reg [31:0] m_axi_araddr,
+    output reg m_axi_arvalid,
+    input wire m_axi_arready,
+    input wire [31:0] m_axi_rdata,
+    input wire m_axi_rvalid,
+    output reg m_axi_rready
+);
+
+localparam IDLE = 0, SEND_AR = 1, WAIT_R = 2, HOLD = 3, DONE = 4;
+reg [2:0] state;
+reg [3:0] read_count;
+
+always @(posedge clk) begin
+    if (!resetn) begin
+        state <= IDLE;
+        read_count <= 0;
+        m_axi_araddr <= 0;
+        m_axi_arvalid <= 0;
+        m_axi_rready <= 0;
+        data_out <= 0;
+    end else begin
+        case (state)
+            IDLE: begin
+                read_count <= 0;
+                m_axi_araddr <= 0;
+                state <= SEND_AR;
+            end
+            SEND_AR: begin
+                m_axi_arvalid <= 1;
+                if (m_axi_arready && m_axi_arvalid) begin
+                    m_axi_arvalid <= 0;
+                    m_axi_rready <= 1;
+                    state <= WAIT_R;
+                end
+            end
+            WAIT_R: begin
+                if (m_axi_rvalid) begin
+                    data_out <= m_axi_rdata;
+                    m_axi_rready <= 0;
+                    state <= HOLD;
+                end
+            end
+            HOLD: begin
+                if (read_count < 8) begin
+                    read_count <= read_count + 1;
+                    m_axi_araddr <= m_axi_araddr + 4;
+                    state <= SEND_AR;
+                end else begin
+                    state <= DONE;
+                end
+            end
+            DONE: begin
+                state <= DONE;
+            end
+        endcase
+    end
+end
+endmodule
