@@ -1,8 +1,8 @@
 # AXI-4Lite BRAM Interface and RTL-Based FPGA Data Processor
 
 ## Project Overview
-This repository contains a Self-Project focused on interfacing a Block RAM (BRAM) with a Xilinx AXI BRAM Controller IP to create an AXI-BRAM setup[cite: 378]. 
-Custom RTL-based AXI-4 Lite Masters were developed to read, write, and process data on the FPGA[cite: 379, 410].
+This repository contains a Self-Project focused on interfacing a Block RAM (BRAM) with a Xilinx AXI BRAM Controller IP to create an AXI-BRAM setup. 
+Custom RTL-based AXI-4 Lite Masters were developed to read, write, and process data on the FPGA.
 
 The project is divided into three major milestones:
 1. **Basic AXI-4 Lite Testbench:** A master testbench that mimics an AXI-4 Lite interface to perform single-address Write and Read-back transactions on the BRAM.
